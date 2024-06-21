@@ -43,14 +43,16 @@ layout = dbc.Container([
 )
 def update_charts(selected_jobs):
     filtered_df = df[df['JobTitle'].isin(selected_jobs)]
+    avg_salary_df = filtered_df.groupby('JobTitle')[' SalaryUSD '].mean().reset_index()
+
 
     pie_chart = px.pie(
-        filtered_df, names='JobTitle', values=' SalaryUSD ',
+        avg_salary_df, names='JobTitle', values=' SalaryUSD ',
         title='Средняя зарплата по должностям'
     )
 
     bar_chart = px.bar(
-        filtered_df, y='JobTitle', x=' SalaryUSD ',
+        avg_salary_df, y='JobTitle', x=' SalaryUSD ',
         title='Средняя зарплата в год, руб',
         orientation='h'
     )
