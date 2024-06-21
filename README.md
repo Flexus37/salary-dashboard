@@ -13,7 +13,10 @@
 * pandas
 * plotly
 
-Вы можете установить их с помощью команды: **pip install dash dash_bootstrap_components pandas plotly**
+Вы можете установить их с помощью команды: 
+```bash
+pip install dash dash_bootstrap_components pandas plotly
+```
 
 Затем скачайте этот репозиторий и разместите его в выбранной директории:
 ```bash
