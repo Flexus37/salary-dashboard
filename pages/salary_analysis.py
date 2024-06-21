@@ -14,20 +14,45 @@ layout = dbc.Container([
     html.Br(),
     dbc.Row([
         dbc.Col([
-            dcc.Graph(
-                figure=px.pie(
-                    df, names='position', values='salary',
-                    title='Средняя зарплата по должностям'
-                )
+            dbc.Label("Выберите должности:"),
+            dcc.Dropdown(
+                id='job-filter',
+                options=[{'label': job, 'value': job} for job in df['JobTitle'].unique()],
+                value=df['JobTitle'].unique().tolist(),  # По умолчанию все должности
+                multi=True
             )
-        ], width=6),
+        ], width=12)
+    ]),
+    html.Br(),
+    dbc.Row([
         dbc.Col([
-            dcc.Graph(
-                figure=px.bar(
-                    df, x='position', y='salary',
-                    title='Средняя зарплата в год, руб'
-                )
-            )
-        ], width=6)
+            dcc.Graph(id='pie-chart', style={'width': '100%'})
+        ], width=12)
+    ]),
+    dbc.Row([
+        dbc.Col([
+            dcc.Graph(id='bar-chart', style={'width': '100%'})
+        ], width=12)
     ])
-])
+], fluid=True)
+
+@callback(
+    [Output('pie-chart', 'figure'),
+     Output('bar-chart', 'figure')],
+    [Input('job-filter', 'value')]
+)
+def update_charts(selected_jobs):
+    filtered_df = df[df['JobTitle'].isin(selected_jobs)]
+
+    pie_chart = px.pie(
+        filtered_df, names='JobTitle', values=' SalaryUSD ',
+        title='Средняя зарплата по должностям'
+    )
+
+    bar_chart = px.bar(
+        filtered_df, y='JobTitle', x=' SalaryUSD ',
+        title='Средняя зарплата в год, руб',
+        orientation='h'
+    )
+
+    return pie_chart, bar_chart

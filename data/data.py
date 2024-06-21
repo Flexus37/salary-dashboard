@@ -1,4 +1,5 @@
 import pandas as pd
 
-df = pd.read_csv('data/salary_update.csv', sep=',')
-all_cont = df['country'].unique()
+df = pd.read_csv('data/salary.csv', sep=',')
+df[' SalaryUSD '] = df[' SalaryUSD '].str.replace(',', '').astype(float)
+all_cont = df['Country'].unique()

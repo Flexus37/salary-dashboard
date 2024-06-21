@@ -28,7 +28,7 @@ CONTENT_STYLE = {
 sidebar = html.Div(
     [
         html.H2("Анализ IT-рынка", className="display-6"),
-        html.Hр(),
+        html.Hr(),
         html.P(
             "Проект по анализу зарплат и условий работы IT-специалистов", className="lead"
         ),
@@ -65,7 +65,7 @@ def render_page_content(pathname):
                     "географический и демографический анализ, а также исследование обязанностей и задач, "
                     "выполняемых IT-специалистами."
                 ),
-                html.Hр(),
+                html.Hr(),
                 html.H3("Содержание:"),
                 html.Ul([
                     html.Li("1. Анализ зарплат"),
@@ -83,7 +83,7 @@ def render_page_content(pathname):
     return html.Div(
         [
             html.H1("404: Страница не найдена", className="text-danger"),
-            html.Hр(),
+            html.Hr(),
             html.P(f"Путь {pathname} не найден..."),
         ],
         className="p-3 bg-light rounded-3",
