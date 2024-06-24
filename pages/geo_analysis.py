@@ -42,8 +42,12 @@ layout = dbc.Container([
         dbc.Col([
             dbc.Card(dbc.CardBody([
                 html.H4("ТОП-5 стран по ЗП", style={'textAlign': 'center'}),
-                html.Div(id='top-countries-card')
-            ])),
+                html.Div(id='top-countries-card', style={'padding': '10px'})
+            ]), style={
+                'padding': '15px',
+                'borderRadius': '10px',
+                'boxShadow': '0 4px 8px 0 rgba(0, 0, 0, 0.2)'
+            }),
         ], width=4),
         dbc.Col([], width=4),
     ])
@@ -72,13 +76,21 @@ def update_geo_analysis(selected_years):
 
     top_countries_card = html.Div([
         html.Div([
-            html.Span(f"{country}", className="country"),
-            html.Span(f"{salary:.2f} руб.", className="salary")
-        ], className=f"country-card {color}")
+            html.Span(f"{country}", style={'fontWeight': 'bold', 'paddingRight': '10px'}),
+            html.Span(f"{salary:.2f} руб.", style={'fontWeight': 'bold', 'paddingLeft': '10px'})
+        ], style={
+            'display': 'flex',
+            'justifyContent': 'space-between',
+            'padding': '10px',
+            'margin': '5px 0',
+            'borderRadius': '5px',
+            'color': 'white',
+            'backgroundColor': color
+        })
         for country, salary, color in zip(
             top_countries['Country'], 
             top_countries[' SalaryUSD '], 
-            ['country-1', 'country-2', 'country-3', 'country-4', 'country-5']
+            ['#ff6f61', '#ffcc5c', '#88d8b0', '#6a9fb5', '#f29e4c']
         )
     ])
     
