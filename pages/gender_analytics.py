@@ -97,7 +97,7 @@ def update_gender_charts(selected_genders, selected_years):
 
     line_chart = px.line(
         aggregated_df, x='Survey Year', y=' SalaryUSD ', color='Gender',
-        labels={'Survey Year': 'Год опроса', ' SalaryUSD ': 'Средняя зарплата, долл.', 'Gender':'Пол'},
+        labels={'Survey Year': 'Год опроса', ' SalaryUSD ': 'Средняя зарплата, руб', 'Gender':'Пол'},
         title='Изменение зарплат по гендеру'
     )
     line_chart.update_layout(xaxis=dict(tickmode='linear', tick0=df['Survey Year'].min(), dtick=1))

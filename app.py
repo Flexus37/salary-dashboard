@@ -1,7 +1,7 @@
 import dash_bootstrap_components as dbc
 from dash import Dash, Input, Output, dcc, html
 
-from pages import gender_analysis, salary_analysis, trends
+from pages import gender_analytics, salary_analysis, trends
 
 external_stylesheets = [dbc.themes.MATERIA]
 app = Dash(__name__, external_stylesheets=external_stylesheets, use_pages=True)
@@ -37,7 +37,7 @@ sidebar = html.Div(
                 dbc.NavLink("Главная", href="/", active="exact"),
                 dbc.NavLink("Анализ зарплат", href="/salary_analysis", active="exact"),
                 dbc.NavLink("Тренды", href="/trends", active="exact"),
-                dbc.NavLink("Гендерный анализ", href="/gender_analysis", active="exact"),
+                dbc.NavLink("Гендерный анализ", href="/gender_analytics", active="exact"),
             ],
             vertical=True,
             pills=True,
@@ -83,8 +83,8 @@ def render_page_content(pathname):
         return salary_analysis.layout
     elif pathname == "/trends":
         return trends.layout
-    elif pathname == "/gender_analysis":
-        return gender_analysis.layout
+    elif pathname == "/gender_analytics":
+        return gender_analytics.layout
     return html.Div(
         [
             html.H1("404: Страница не найдена", className="text-danger"),
