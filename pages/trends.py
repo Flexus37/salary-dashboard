@@ -83,16 +83,16 @@ def update_trends_charts(selected_jobs, selected_countries, selected_years):
 
     line_chart = px.line(
         aggregated_df, x='Survey Year', y=' SalaryUSD ', color='JobTitle',
-        labels={'Survey Year': 'Год опроса', ' SalaryUSD ':"Средняя зарплата, руб", 'JobTitle':'Должность'},
+        labels={'Survey Year': 'Год опроса', ' SalaryUSD ':"Средняя зарплата, $", 'JobTitle':'Должность'},
         title='Изменение зарплат по годам'
     )
     line_chart.update_layout(xaxis=dict(tickmode='linear', tick0=aggregated_df['Survey Year'].min(), dtick=1))
 
     bar_chart = px.bar(
         aggregated_df, x='Survey Year', y=' SalaryUSD ', color='JobTitle', barmode='group',
-                labels={'Survey Year': 'Год опроса', ' SalaryUSD ':"Средняя зарплата, руб", 'JobTitle':'Должность'},
+                labels={'Survey Year': 'Год опроса', ' SalaryUSD ':"Средняя зарплата, $", 'JobTitle':'Должность'},
 
-        title='Средняя зарплата в год, руб'
+        title='Средняя зарплата в год, $'
     )
     bar_chart.update_layout(xaxis=dict(tickmode='linear', tick0=aggregated_df['Survey Year'].min(), dtick=1))
 

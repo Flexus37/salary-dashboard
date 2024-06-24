@@ -1,3 +1,4 @@
+import dash
 import dash_bootstrap_components as dbc
 import pandas as pd
 import plotly.express as px
@@ -7,6 +8,9 @@ from data.data import df
 
 # Удалим строки с аномально высокими значениями зарплаты
 df = df[df[' SalaryUSD '] < df[' SalaryUSD '].quantile(0.99)]
+
+# Преобразуем значения зарплат в числовой формат
+df[' SalaryUSD '] = pd.to_numeric(df[' SalaryUSD '], errors='coerce')
 
 layout = dbc.Container([
     dbc.Row([
@@ -22,26 +26,28 @@ layout = dbc.Container([
             dcc.Checklist(
                 id='gender-filter',
                 options=[
-                    {'label': 'Мужчина', 'value': 'Male'},
-                    {'label': 'Женщина', 'value': 'Female'},
-                    {'label': 'Воздержался', 'value': 'Prefer not to say'}
+                    {'label': html.Span('Мужчина', style={'fontSize': '18px', 'marginRight': '15px'}), 'value': 'Male'},
+                    {'label': html.Span('Женщина', style={'fontSize': '18px', 'marginRight': '15px'}), 'value': 'Female'},
+                    {'label': html.Span('Воздержался', style={'fontSize': '18px', 'marginRight': '15px'}), 'value': 'Prefer not to say'}
                 ],
                 value=['Male', 'Female', 'Prefer not to say'],
-                inline=True
+                inline=True,
+                style={'fontSize': '18px', 'marginBottom': '15px'}
             )
         ], width=12)
     ]),
     html.Br(),
     dbc.Row([
         dbc.Col([
-            dbc.Label("Выберите период:"),
+            dbc.Label("Выберите период:", style={'fontSize': '18px'}),
             dcc.RangeSlider(
                 id='year-range-slider-gender',
                 min=df['Survey Year'].min(),
                 max=df['Survey Year'].max(),
                 value=[df['Survey Year'].min(), df['Survey Year'].max()],
                 marks={str(year): str(year) for year in df['Survey Year'].unique()},
-                step=None
+                step=None,
+                tooltip={"placement": "bottom", "always_visible": True}
             )
         ], width=12)
     ]),
@@ -99,10 +105,15 @@ def update_gender_charts(selected_genders, selected_years):
         aggregated_df, x='Survey Year', y=' SalaryUSD ', color='Gender',
         title='Изменение зарплат по гендеру'
     )
-    line_chart.update_layout(xaxis=dict(tickmode='linear', tick0=aggregated_df['Survey Year'].min(), dtick=1))
+    line_chart.update_layout(
+        xaxis=dict(tickmode='linear', tick0=aggregated_df['Survey Year'].min(), dtick=1),
+        xaxis_title="Год опроса",
+        yaxis_title="Средняя зарплата (USD)",
+        legend_title="Гендер"
+    )
 
     male_salary = filtered_df[filtered_df['Gender'] == 'Male'][' SalaryUSD '].mean()
     female_salary = filtered_df[filtered_df['Gender'] == 'Female'][' SalaryUSD '].mean()
     other_salary = filtered_df[filtered_df['Gender'] == 'Prefer not to say'][' SalaryUSD '].mean()
 
-    return line_chart, f"{male_salary:.2f} руб.", f"{female_salary:.2f} руб.", f"{other_salary:.2f} руб."
+    return line_chart, f"{male_salary:.2f} $", f"{female_salary:.2f} $", f"{other_salary:.2f} $"

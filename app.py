@@ -1,8 +1,8 @@
 import dash_bootstrap_components as dbc
 from dash import Dash, Input, Output, dcc, html
 
-from pages import gender_analytics, salary_analysis, trends, geo_analysis
-
+from pages import (db_analysis, gender_analysis, geo_analysis, salary_analysis,
+                   trends)
 
 external_stylesheets = [dbc.themes.MATERIA]
 app = Dash(__name__, external_stylesheets=external_stylesheets, use_pages=True)
@@ -38,8 +38,9 @@ sidebar = html.Div(
                 dbc.NavLink("Главная", href="/", active="exact"),
                 dbc.NavLink("Анализ зарплат", href="/salary_analysis", active="exact"),
                 dbc.NavLink("Тренды", href="/trends", active="exact"),
-                dbc.NavLink("Гендерный анализ", href="/gender_analytics", active="exact"),
+                dbc.NavLink("Гендерный анализ", href="/gender_analysis", active="exact"),
                 dbc.NavLink("Географический анализ", href="/geo_analysis", active="exact"),
+                dbc.NavLink("Анализ баз данных", href="/db_analysis", active="exact"),
             ],
             vertical=True,
             pills=True,
@@ -70,14 +71,24 @@ def render_page_content(pathname):
                 ),
                 html.Hr(),
                 html.H3("Содержание:"),
-                html.Ul([
-                    html.Li("1. Анализ зарплат"),
-                    html.Li("2. Тренды"),
-                    html.Li("3. Гендерное анализ зарплат"),
-                    html.Li("4. Количество серверов с базами данных по годам"),
-                    html.Li("5. Географический анализ")
+                html.Ol([
+                    html.Li([
+                        html.A("Анализ зарплат", href='/salary_analysis'),
+                    ]),
+                    html.Li([
+                        html.A("Тренды", href='/trends'),
+                    ]),
+                    html.Li([
+                        html.A("Гендерный анализ зарплат", href='/gender_analysis'),
+                    ]),
+                    html.Li([
+                        html.A("Географический анализ", href='/geo_analysis'),
+                    ]),
+                    html.Li([
+                        html.A("Анализ бад данных", href='/db_analysis'),
+                    ]),
                 ]),
-                html.Img(src='/static/images/изображение.png', style={'width': '100%'})
+                html.Img(src='/static/images/dashboard.jpg', style={'width': '100%'})
             ],
             style={'padding': '20px'}
         )
@@ -85,10 +96,12 @@ def render_page_content(pathname):
         return salary_analysis.layout
     elif pathname == "/trends":
         return trends.layout
-    elif pathname == "/gender_analytics":
-        return gender_analytics.layout
+    elif pathname == "/gender_analysis":
+        return gender_analysis.layout
     elif pathname == "/geo_analysis":
         return geo_analysis.layout
+    elif pathname == "/db_analysis":
+        return db_analysis.layout
     return html.Div(
         [
             html.H1("404: Страница не найдена", className="text-danger"),
