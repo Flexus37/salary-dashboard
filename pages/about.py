@@ -21,7 +21,6 @@ layout = dbc.Container([
                 ),
             html.A("Исходный код проекта доступен на GitHub", href="https://github.com/Flexus37/salary-dashboard"),
             html.Hr(),
-            # html.A("GitHub", href="https://github.com/Flexus37/salary-dashboard"),
            html.H2("Информация о данных", style={"textAlign":'center'}),
             html.P("В этом проекте используется датасет о зарплатах в IT-индустрии, предоставленный сайтом Stack Overflow. Датасет содержит следующую информацию:"),
             html.Pre([
