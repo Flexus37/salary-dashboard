@@ -48,11 +48,13 @@ def update_charts(selected_jobs):
 
     pie_chart = px.pie(
         avg_salary_df, names='JobTitle', values=' SalaryUSD ',
+        labels={ ' SalaryUSD ': 'Средняя зарплата, руб', 'JobTitle':'Должность'},
         title='Средняя зарплата по должностям'
     )
 
     bar_chart = px.bar(
         avg_salary_df, y='JobTitle', x=' SalaryUSD ',
+        labels={ ' SalaryUSD ': 'Средняя зарплата, руб', 'JobTitle':'Должность'},
         title='Средняя зарплата в год, руб',
         orientation='h'
     )
