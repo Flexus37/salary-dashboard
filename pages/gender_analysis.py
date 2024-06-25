@@ -99,7 +99,7 @@ def update_graph(selected_genders, selected_years):
                 x=average_salary_df['Survey Year'],
                 y=average_salary_df[' SalaryUSD '],
                 mode='lines+markers',
-                name=translated_gender.get(gender, gender)
+                name=f'{translated_gender.get(gender, gender)}'
             )
             traces.append(trace)
 
@@ -109,8 +109,8 @@ def update_graph(selected_genders, selected_years):
                 dbc.Card(
                     dbc.CardBody(
                         [
-                            html.H5(f"Средняя зарплата ({translated_gender.get(gender, gender)}):", className="card-title"),
-                            html.P(f"{overall_avg_salary:.2f} $", className="card-text"),
+                            html.H5(f" ({translated_gender.get(gender, gender)}):", className="card-title"),
+                            html.P(f"{overall_avg_salary:.2f} USD", className="card-text"),
                         ]
                     ),
                     style={"width": "18rem"},
@@ -122,7 +122,7 @@ def update_graph(selected_genders, selected_years):
         'layout': go.Layout(
             title='Гендерный анализ зарплат',
             xaxis={'title': 'Год', 'dtick': 1},
-            yaxis={'title': 'Средняя зарплата ($)'},
+            yaxis={'title': 'Средняя зарплата (USD)'},
             hovermode='closest',
             legend={'title': 'Гендер'}
         )
