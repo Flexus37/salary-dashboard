@@ -42,6 +42,12 @@ python app.py
 
 **Просматривание разных графиков.** Вы можете посмотреть разные графики, выбрав их из навигационного меню слева от графиков. Доступны следующие типы графиков: *Анализ зарплат, Тренды, Гендерный анализ зарплат, Анализ баз данных и Географический анализ*
 
+![salary_analysis](static/images.salary_analysis.png)
+![trends](static/images.trends.png)
+![gender_analysis](static/images.gender_analysis.png)
+![geo_analysis](static/images.geo_analysis.png)
+![db_analysis](static/images.db_analysis.png)
+
 ## Информация о данных
 
 В этом проекте используется датасет о зарплатах в IT-индустрии, предоставленный сайтом [Stack Overflow](https://stackoverflow.com/). Датасет содержит следующую информацию:
