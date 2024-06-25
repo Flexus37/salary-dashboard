@@ -42,11 +42,11 @@ python app.py
 
 **Просматривание разных графиков.** Вы можете посмотреть разные графики, выбрав их из навигационного меню слева от графиков. Доступны следующие типы графиков: *Анализ зарплат, Тренды, Гендерный анализ зарплат, Анализ баз данных и Географический анализ*
 
-![salary_analysis](static/images.salary_analysis.png)
-![trends](static/images.trends.png)
-![gender_analysis](static/images.gender_analysis.png)
-![geo_analysis](static/images.geo_analysis.png)
-![db_analysis](static/images.db_analysis.png)
+![salary_analysis](static/images/salary_analysis.jpg)
+![trends](static/images/trends.jpg)
+![gender_analysis](static/images/gender_analysis.jpg)
+![geo_analysis](static/images/geo_analysis.jpg)
+![db_analysis](static/images/db_analysis.jpg)
 
 ## Информация о данных
 
