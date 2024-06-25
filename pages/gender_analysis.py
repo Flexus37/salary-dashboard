@@ -109,7 +109,7 @@ def update_graph(selected_genders, selected_years):
                 dbc.Card(
                     dbc.CardBody(
                         [
-                            html.H5(f" ({translated_gender.get(gender, gender)}):", className="card-title"),
+                            html.H5(f"Средняя зарплата ({translated_gender.get(gender, gender)}):", className="card-title"),
                             html.P(f"{overall_avg_salary:.2f} USD", className="card-text"),
                         ]
                     ),
