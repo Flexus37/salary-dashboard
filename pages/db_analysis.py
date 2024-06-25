@@ -62,6 +62,11 @@ def update_db_analysis(selected_years):
 
     db_count_by_year = filtered_df.groupby('Survey Year')['DatabaseCount'].sum().reset_index()
     line_chart = px.line(db_count_by_year, x='Survey Year', y='DatabaseCount', title='Количество серверов с БД по годам')
-    line_chart.update_layout(xaxis_title='Год опроса', yaxis_title='Количество серверов', title_x=0.5)
+    line_chart.update_layout(
+        xaxis_title='Год опроса',
+        yaxis_title='Количество серверов',
+        title_x=0.5,
+        xaxis=dict(dtick=1)  # Добавлено, чтобы отображались только целые годы
+    )
 
     return pie_chart, line_chart

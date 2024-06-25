@@ -1,119 +1,130 @@
-import dash
 import dash_bootstrap_components as dbc
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 from dash import Input, Output, callback, dcc, html
 
 from data.data import df
 
-# Удалим строки с аномально высокими значениями зарплаты
-df = df[df[' SalaryUSD '] < df[' SalaryUSD '].quantile(0.99)]
-
-# Преобразуем значения зарплат в числовой формат
+# Обработка данных
+df['Survey Year'] = df['Survey Year'].astype(int)
 df[' SalaryUSD '] = pd.to_numeric(df[' SalaryUSD '], errors='coerce')
 
+# Заполнение пропущенных значений в столбце Gender
+df['Gender'] = df['Gender'].fillna('Not Asked')
+
+# Проверка наличия данных за 2017 год после заполнения
+print("Данные за 2017 год после заполнения пропущенных значений в Gender:")
+print(df[df['Survey Year'] == 2017]['Gender'].value_counts())
+
+# Создание функции для расчета средней зарплаты по гендеру и году
+def calculate_average_salary(df, gender, years):
+    filtered_df = df[(df['Gender'] == gender) & (df['Survey Year'].between(years[0], years[1]))]
+    print(f"Filtered data for {gender} between {years[0]} and {years[1]}:\n", filtered_df['Survey Year'].value_counts())
+    return filtered_df.groupby('Survey Year')[' SalaryUSD '].mean().reset_index()
+
+# Разметка страницы
 layout = dbc.Container([
     dbc.Row([
         html.Div([
             html.H1("Гендерный анализ зарплат"),
-            html.P("Изменение зарплат по гендеру")
+            html.P("Анализ средней зарплаты по гендеру за выбранный период."),
         ], style={'textAlign': 'center'})
     ]),
     html.Br(),
     dbc.Row([
         dbc.Col([
-            dbc.Label("Гендер:"),
+            dbc.Label("Гендер:", style={'font-size': '20px'}),
             dcc.Checklist(
-                id='gender-filter',
+                id='gender-checklist',
                 options=[
                     {'label': html.Span('Мужчина', style={'fontSize': '18px', 'marginRight': '15px'}), 'value': 'Male'},
                     {'label': html.Span('Женщина', style={'fontSize': '18px', 'marginRight': '15px'}), 'value': 'Female'},
-                    {'label': html.Span('Воздержался', style={'fontSize': '18px', 'marginRight': '15px'}), 'value': 'Prefer not to say'}
+                    {'label': html.Span('Воздержался', style={'fontSize': '18px', 'marginRight': '15px'}), 'value': 'Prefer not to say'},
+                    {'label': html.Span('Неизвестно', style={'fontSize': '18px', 'marginRight': '15px'}), 'value': 'Not Asked'}
                 ],
-                value=['Male', 'Female', 'Prefer not to say'],
+                value=['Male', 'Female', 'Prefer not to say', 'Not Asked'],
                 inline=True,
-                style={'fontSize': '18px', 'marginBottom': '15px'}
-            )
-        ], width=12)
-    ]),
-    html.Br(),
+                style={'font-size': '18px', 'display': 'flex', 'flex-wrap': 'wrap'}
+            ),
+        ], width=12),
+    ], style={'margin-bottom': '20px'}),
     dbc.Row([
         dbc.Col([
-            dbc.Label("Выберите период:", style={'fontSize': '18px'}),
+            dbc.Label("Период:", style={'font-size': '20px'}),
             dcc.RangeSlider(
-                id='year-range-slider-gender',
+                id='year-slider',
                 min=df['Survey Year'].min(),
                 max=df['Survey Year'].max(),
+                step=1,
                 value=[df['Survey Year'].min(), df['Survey Year'].max()],
-                marks={str(year): str(year) for year in df['Survey Year'].unique()},
-                step=None,
-                tooltip={"placement": "bottom", "always_visible": True}
-            )
-        ], width=12)
+                marks={str(year): str(year) for year in df['Survey Year'].unique()}
+            ),
+        ], width=12),
     ]),
     html.Br(),
     dbc.Row([
         dbc.Col([
-            dcc.Graph(id='gender-line-chart', style={'width': '100%'})
-        ], width=12)
+            dcc.Graph(id='salary-graph', style={'width': '100%', 'height': '500px'}),
+        ], width=12),
     ]),
     html.Br(),
     dbc.Row([
         dbc.Col([
-            dbc.Card(
-                dbc.CardBody([
-                    html.H4("Средняя зарплата (Мужчина)", className="card-title"),
-                    html.P(id="male-salary", className="card-text")
-                ])
-            )
-        ], width=4),
-        dbc.Col([
-            dbc.Card(
-                dbc.CardBody([
-                    html.H4("Средняя зарплата (Женщина)", className="card-title"),
-                    html.P(id="female-salary", className="card-text")
-                ])
-            )
-        ], width=4),
-        dbc.Col([
-            dbc.Card(
-                dbc.CardBody([
-                    html.H4("Средняя зарплата (Воздержался)", className="card-title"),
-                    html.P(id="other-salary", className="card-text")
-                ])
-            )
-        ], width=4)
-    ])
+            html.Div(id='average-salary-indicators', style={'margin-top': '20px', 'display': 'flex', 'justify-content': 'space-around'})
+        ], width=12),
+    ]),
 ], fluid=True)
 
 @callback(
-    [Output('gender-line-chart', 'figure'),
-     Output('male-salary', 'children'),
-     Output('female-salary', 'children'),
-     Output('other-salary', 'children')],
-    [Input('gender-filter', 'value'),
-     Input('year-range-slider-gender', 'value')]
+    [Output('salary-graph', 'figure'),
+     Output('average-salary-indicators', 'children')],
+    [Input('gender-checklist', 'value'),
+     Input('year-slider', 'value')]
 )
-def update_gender_charts(selected_genders, selected_years):
-    filtered_df = df[(df['Gender'].isin(selected_genders)) &
-                     (df['Survey Year'] >= selected_years[0]) &
-                     (df['Survey Year'] <= selected_years[1])]
+def update_graph(selected_genders, selected_years):
+    print(f"Selected years: {selected_years}")
+    traces = []
+    indicators = []
+    translated_gender = {
+        'Male': 'Мужчина',
+        'Female': 'Женщина',
+        'Prefer not to say': 'Воздержался',
+        'Not Asked': 'Неизвестно'
+    }
+    for gender in selected_genders:
+        average_salary_df = calculate_average_salary(df, gender, selected_years)
+        if not average_salary_df.empty:
+            trace = go.Scatter(
+                x=average_salary_df['Survey Year'],
+                y=average_salary_df[' SalaryUSD '],
+                mode='lines+markers',
+                name=translated_gender.get(gender, gender)
+            )
+            traces.append(trace)
 
-    aggregated_df = filtered_df.groupby(['Survey Year', 'Gender'], as_index=False).agg({' SalaryUSD ': 'mean'})
+            # Расчет средней зарплаты за весь выбранный период
+            overall_avg_salary = average_salary_df[' SalaryUSD '].mean()
+            indicators.append(
+                dbc.Card(
+                    dbc.CardBody(
+                        [
+                            html.H5(f"Средняя зарплата ({translated_gender.get(gender, gender)}):", className="card-title"),
+                            html.P(f"{overall_avg_salary:.2f} $", className="card-text"),
+                        ]
+                    ),
+                    style={"width": "18rem"},
+                )
+            )
 
-    line_chart = px.line(
-        aggregated_df, x='Survey Year', y=' SalaryUSD ', color='Gender',
-        title='Изменение зарплат по гендеру'
-    )
-    line_chart.update_layout(
-        xaxis=dict(tickmode='linear', tick0=aggregated_df['Survey Year'].min(), dtick=1),
-        xaxis_title="Год опроса",
-        yaxis_title="Средняя зарплата (USD)",
-        legend_title="Гендер"
-    )
-
-    male_salary = filtered_df[filtered_df['Gender'] == 'Male'][' SalaryUSD '].mean()
-    female_salary = filtered_df[filtered_df['Gender'] == 'Female'][' SalaryUSD '].mean()
-    other_salary = filtered_df[filtered_df['Gender'] == 'Prefer not to say'][' SalaryUSD '].mean()
-
-    return line_chart, f"{male_salary:.2f} $", f"{female_salary:.2f} $", f"{other_salary:.2f} $"
+    figure = {
+        'data': traces,
+        'layout': go.Layout(
+            title='Гендерный анализ зарплат',
+            xaxis={'title': 'Год', 'dtick': 1},
+            yaxis={'title': 'Средняя зарплата ($)'},
+            hovermode='closest',
+            legend={'title': 'Гендер'}
+        )
+    }
+    return figure, indicators
